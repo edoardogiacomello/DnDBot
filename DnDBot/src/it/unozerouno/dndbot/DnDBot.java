@@ -53,19 +53,19 @@ public class DnDBot extends TelegramEvents {
 				}
 				//Removes last ", "
 				result.delete(result.length()-2, result.length());
-				//judgement:
-				judgement = "";
-				Float max = (float)(numberOfFaces*numberOfDices);
-				Float min = (float) 0;
-				Float rating = (((float)sum))/(max-min);
-				Integer ratingp = (int)(rating*100f);
-				if (rating >= 0.8) judgement = "\n" + ratingp.toString() + "%: Oustanding rolls!";
-				else if (rating >= 0.6) judgement = "\n" + ratingp.toString() + "%: Good rolls!";
-				else if (rating >= 0.4) judgement = "\n" + ratingp.toString() + "%: Average rolls..";
-				else if (rating >= 0.2) judgement = "\n" + ratingp.toString() + "%: Bad rolls!";
-				else if (rating >= 0) judgement = "\n" + ratingp.toString() + "%: Auful rolls!";
-				
 			}
+			//judgement:
+			judgement = "";
+			Float max = (float)(numberOfFaces*numberOfDices);
+			Float min = (float) 0;
+			Float rating = (((float)sum))/(max-min);
+			Integer ratingp = (int)(rating*100f);
+			if (rating >= 0.8) judgement = "\n" + ratingp.toString() + "%: Oustanding rolls!";
+			else if (rating >= 0.6) judgement = "\n" + ratingp.toString() + "%: Good rolls!";
+			else if (rating >= 0.4) judgement = "\n" + ratingp.toString() + "%: Average rolls..";
+			else if (rating >= 0.2) judgement = "\n" + ratingp.toString() + "%: Bad rolls!";
+			else if (rating >= 0) judgement = "\n" + ratingp.toString() + "%: Auful rolls!";
+			
 			
 			result.append(judgement);
 			result.append("\n Result: " + Integer.toString(sum));
