@@ -57,8 +57,8 @@ public class DnDBot extends TelegramEvents {
 			//judgement:
 			judgement = "";
 			Float max = (float)(numberOfFaces*numberOfDices);
-			Float min = (float) 0;
-			Float rating = (((float)sum))/(max-min);
+			Float min = (float) numberOfDices;
+			Float rating = (((float)sum) - min)/(max-min);
 			Integer ratingp = (int)(rating*100f);
 			if (rating >= 0.8) judgement = "\n" + ratingp.toString() + "%: Oustanding rolls!";
 			else if (rating >= 0.6) judgement = "\n" + ratingp.toString() + "%: Good rolls!";
