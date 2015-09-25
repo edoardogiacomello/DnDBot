@@ -3,6 +3,7 @@ package it.unozerouno.dndbot;
 import it.unozerouno.dndbot.CommandParser.BotCommands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -25,7 +26,7 @@ public class DnDBot extends TelegramEvents {
 			}
 
 }
-		private String rollDice(String argument){
+		private String rollDices(String argument){
 			int numberOfDices = 1;
 			int numberOfFaces = 6;
 			String error = "Sorry, I can't understand what you asked for.";
@@ -41,7 +42,7 @@ public class DnDBot extends TelegramEvents {
 			if(!values[0].equals("")){numberOfDices = Integer.parseInt(values[0]);}
 			numberOfFaces = Integer.parseInt(values[1]);
 			for (int i = 0; i < numberOfDices; i++) {
-				int dice = ThreadLocalRandom.current().nextInt(1, numberOfFaces + 1);
+				int dice = rollDice(1,numberOfFaces);
 				if(numberOfDices <= threshold) {diceResults.add(dice);}
 				sum += dice; 
 			}
@@ -77,6 +78,60 @@ public class DnDBot extends TelegramEvents {
 			
 		}
 		
+		private int rollDice(int nDices, int nFaces){
+			int result = 0;
+			for (int i = 0; i < nDices; i++) {
+				result += ThreadLocalRandom.current().nextInt(1, nFaces + 1);
+			}
+			return result;
+		}
+		private String generateStatsPC(){
+			StringBuffer output = new StringBuffer();
+			int[] stats = new int[6];
+			
+			//rolling stats
+			for (int i = 0; i < 6; i++) {
+				int[] rolls = new int[4];
+				rolls[0] = rollDice(1,6);
+				rolls[1] = rollDice(1,6);
+				rolls[2] = rollDice(1,6);
+				rolls[3] = rollDice(1,6);
+				Arrays.sort(rolls);
+				stats[i] = rolls[1] + rolls[2] + rolls[3];
+			}
+			
+			output.append("\nSTR: " + stats[0] + " [" + getModifier(stats[0]) + "]");
+			output.append("\nDEX: " + stats[1] + " [" + getModifier(stats[1]) + "]");
+			output.append("\nCON: " + stats[2] + " [" + getModifier(stats[2]) + "]");
+			output.append("\nINT: " + stats[3] + " [" + getModifier(stats[3]) + "]");
+			output.append("\nWIS: " + stats[4] + " [" + getModifier(stats[4]) + "]");
+			output.append("\nCHA: " + stats[5] + " [" + getModifier(stats[5]) + "]");
+			return output.toString();
+		}
+		private String generateStatsAverage(){
+			StringBuffer output = new StringBuffer();
+			int[] stats = new int[6];
+			
+			//rolling stats
+			for (int i = 0; i < 6; i++) {
+				stats[i] = rollDice(3,6);
+			}
+			
+			output.append("\nSTR: " + stats[0] + " [" + getModifier(stats[0]) + "]");
+			output.append("\nDEX: " + stats[1] + " [" + getModifier(stats[1]) + "]");
+			output.append("\nCON: " + stats[2] + " [" + getModifier(stats[2]) + "]");
+			output.append("\nINT: " + stats[3] + " [" + getModifier(stats[3]) + "]");
+			output.append("\nWIS: " + stats[4] + " [" + getModifier(stats[4]) + "]");
+			output.append("\nCHA: " + stats[5] + " [" + getModifier(stats[5]) + "]");
+			return output.toString();
+		}
+		
+		private String getModifier(int stat){
+			double fractionalMod = ((double)stat - 10)/2d;
+			long integerMod = (long)fractionalMod;
+			return Long.toString(integerMod);
+		}
+		
 		private void startBot(String token) {
 			if (token.isEmpty()) {
 				System.out
@@ -107,7 +162,6 @@ public class DnDBot extends TelegramEvents {
 		@Override
 		public void onUpdate(Update update) {
 			// TODO Auto-generated method stub
-			System.out.println("Got update");
 		}
 
 		@Override
@@ -125,7 +179,13 @@ public class DnDBot extends TelegramEvents {
 						reply = "please, specify what dice to roll, i.e. /roll 3d6";
 					break;
 					}
-					reply = rollDice(command.getArgument());
+					reply = rollDices(command.getArgument());
+					break;
+				case STATS_NPC:
+					reply = generateStatsAverage();
+					break;
+				case STATS_CHARACTER:
+					reply = generateStatsPC();
 					break;
 				case NOT_A_COMMAND:
 					reply = "What?";

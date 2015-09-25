@@ -5,6 +5,8 @@ public class CommandParser {
 	private final static String groupCommand = "@DnDBot";
 	public enum BotCommands{
 		ROLL("/roll"),
+		STATS_NPC("/stats_npc"),
+		STATS_CHARACTER("/stats_pc"),
 		NOT_A_COMMAND("/error");
 		private String value;
 		private String argument;
@@ -28,7 +30,7 @@ public class CommandParser {
 	
 	public static BotCommands parseCommand(String message){
 		for (BotCommands command : BotCommands.values()) {
- 			if ((command != BotCommands.NOT_A_COMMAND) && (message.startsWith(command.getValue() + " ")||message.startsWith(command.getValue() + groupCommand))){
+ 			if ((command != BotCommands.NOT_A_COMMAND) && (message.startsWith(command.getValue()) || message.startsWith(command.getValue() + groupCommand))){
 				command.setArgument(getArgument(command,message));
 				return command;
 			}
