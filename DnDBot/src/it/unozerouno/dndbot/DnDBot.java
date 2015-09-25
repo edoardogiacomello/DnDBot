@@ -2,6 +2,7 @@ package it.unozerouno.dndbot;
 
 import it.unozerouno.dndbot.CommandParser.BotCommands;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -27,23 +28,52 @@ public class DnDBot extends TelegramEvents {
 		private String rollDice(String argument){
 			int numberOfDices = 1;
 			int numberOfFaces = 6;
-			String result = "Sorry, I can't understand what you asked for.";
+			String error = "Sorry, I can't understand what you asked for.";
+			StringBuffer result = new StringBuffer();
+			int sum = 0;
+			final int threshold = 20;
+			ArrayList<Integer> diceResults = new ArrayList<Integer>();
+			String judgement = "";
 			
 			argument = argument.toLowerCase();
 			try{
 			String[] values = argument.split("d");
 			if(!values[0].equals("")){numberOfDices = Integer.parseInt(values[0]);}
 			numberOfFaces = Integer.parseInt(values[1]);
-			int randomNumber = 0;
 			for (int i = 0; i < numberOfDices; i++) {
-				randomNumber += ThreadLocalRandom.current().nextInt(1, numberOfFaces + 1);
+				int dice = ThreadLocalRandom.current().nextInt(1, numberOfFaces + 1);
+				if(numberOfDices <= threshold) {diceResults.add(dice);}
+				sum += dice; 
 			}
-			result = Integer.toString(randomNumber);
+			//Printing single dice results
+			if((numberOfDices >= 0)&&(numberOfDices <= threshold) ){
+				result.append("\n Rolls: ");
+				for (int dice : diceResults) {
+					result.append(dice + ", ");
+				}
+				//Removes last ", "
+				result.delete(result.length()-2, result.length());
+				//judgement:
+				judgement = "";
+				Float max = (float)(numberOfFaces*numberOfDices);
+				Float min = (float) 0;
+				Float rating = (((float)sum))/(max-min);
+				Integer ratingp = (int)(rating*100f);
+				if (rating >= 0.8) judgement = "\n" + ratingp.toString() + "%: Oustanding rolls!";
+				else if (rating >= 0.6) judgement = "\n" + ratingp.toString() + "%: Good rolls!";
+				else if (rating >= 0.4) judgement = "\n" + ratingp.toString() + "%: Average rolls..";
+				else if (rating >= 0.2) judgement = "\n" + ratingp.toString() + "%: Bad rolls!";
+				else if (rating >= 0) judgement = "\n" + ratingp.toString() + "%: Auful rolls!";
+				
+			}
+			
+			result.append(judgement);
+			result.append("\n Result: " + Integer.toString(sum));
 			}
 			catch (Exception e){
-				return result;
+				return error;
 				}
-			return result;
+			return result.toString();
 			
 		}
 		
