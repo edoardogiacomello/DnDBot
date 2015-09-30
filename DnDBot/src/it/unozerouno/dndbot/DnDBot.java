@@ -188,8 +188,7 @@ public class DnDBot extends TelegramEvents {
 					reply = generateStatsPC();
 					break;
 				case NOT_A_COMMAND:
-					reply = "What?";
-					break;
+					return;
 				default:
 					break;
 				}
